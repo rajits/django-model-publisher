@@ -1,4 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from django.db import models
+from django.db.models.query import QuerySet
 
 from .signals import publisher_pre_delete
 from .middleware import get_draft_status

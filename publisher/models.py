@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from django.utils import timezone
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
-from .managers import PublisherManager
+from .managers import PublisherQuerySet, PublisherManager
 from .utils import assert_draft
 from .signals import (
     publisher_publish_pre_save_draft,
@@ -130,11 +132,15 @@ class PublisherModelBase(models.Model):
         # Link the draft obj to the current published version
         draft_obj.publisher_linked = publish_obj
 
-        publisher_publish_pre_save_draft.send(sender=draft_obj.__class__, instance=draft_obj)
+        # Pre draft
+        publisher_publish_pre_save_draft.send(
+            sender=draft_obj.__class__, instance=draft_obj)
 
         draft_obj.save(suppress_modified=True)
 
-        publisher_post_publish.send(sender=draft_obj.__class__, instance=draft_obj)
+        # Post publish
+        publisher_post_publish.send(
+            sender=draft_obj.__class__, instance=draft_obj)
 
     @assert_draft
     def patch_placeholders(self, draft_obj):
@@ -159,10 +165,12 @@ class PublisherModelBase(models.Model):
             return
 
         publisher_pre_unpublish.send(sender=self.__class__, instance=self)
+
         self.publisher_linked.delete()
         self.publisher_linked = None
         self.publisher_published_at = None
         self.save()
+
         publisher_post_unpublish.send(sender=self.__class__, instance=self)
 
     @assert_draft
@@ -250,7 +258,9 @@ class PublisherModelBase(models.Model):
         if obj is None:
             obj = self
 
-        model_fields = obj.__class__._meta.get_all_field_names()
+        # All the model field names
+        model_fields = [f.name for f in obj.__class__._meta.get_fields()]
+
         for field in model_fields:
             if field in self.publisher_ignore_fields:
                 continue
@@ -270,7 +280,7 @@ class PublisherModelBase(models.Model):
 
 class PublisherModel(PublisherModelBase):
     objects = models.Manager()
-    publisher_manager = PublisherManager()
+    publisher_manager = PublisherManager.from_queryset(PublisherQuerySet)()
 
     class Meta:
         abstract = True

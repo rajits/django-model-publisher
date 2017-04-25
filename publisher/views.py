@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from django.views.generic import ListView
 from django.views.generic.detail import DetailView
 
@@ -10,7 +12,8 @@ class PublisherViewMixin(object):
         abstract = True
 
     def get_queryset(self):
-        return self.model.objects.filter(publisher_is_draft=get_draft_status()).all()
+        return self.model.objects.filter(
+            publisher_is_draft=get_draft_status()).all()
 
 
 class PublisherDetailView(PublisherViewMixin, DetailView):

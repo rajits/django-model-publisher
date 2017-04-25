@@ -183,9 +183,12 @@ class PublisherAdmin(ModelAdmin):
         revert_name = '%srevert' % (self.url_name_prefix, )
 
         publish_urls = [
-            url(r'^(?P<object_id>\d+)/publish/$', self.publish_view, name=publish_name),
-            url(r'^(?P<object_id>\d+)/unpublish/$', self.unpublish_view, name=unpublish_name),
-            url(r'^(?P<object_id>\d+)/revert/$', self.revert_view, name=revert_name),
+            url(r'^(?P<object_id>\d+)/publish/$',
+                self.publish_view, name=publish_name),
+            url(r'^(?P<object_id>\d+)/unpublish/$',
+                self.unpublish_view, name=unpublish_name),
+            url(r'^(?P<object_id>\d+)/revert/$',
+                self.revert_view, name=revert_name),
         ]
 
         return publish_urls + urls
