@@ -76,7 +76,9 @@ class PublisherAdmin(ModelAdmin):
     # publish or unpublish actions sometime makes the plugins disappear from page
     # so we disable it for now, until we can investigate it further.
     # actions = (make_published, make_unpublished, )
-    list_display = ('publisher_object_title', 'publisher_publish', 'publisher_status', )
+    list_display = (
+        'publisher_object_title', 'publisher_publish', 'publisher_status',
+        'publisher_view')
     url_name_prefix = None
 
     class Media:
@@ -92,7 +94,7 @@ class PublisherAdmin(ModelAdmin):
         self.request = None
         self.url_name_prefix = '%(app_label)s_%(module_name)s_' % {
             'app_label': self.model._meta.app_label,
-            'module_name': self.model._meta.model_name if django.VERSION >= (1, 7) else self.model._meta.module_name,
+            'module_name': self.model._meta.model_name
         }
 
         # Reverse URL strings used in multiple places..
@@ -153,6 +155,12 @@ class PublisherAdmin(ModelAdmin):
         return t.render(c)
     publisher_publish.short_description = 'Published'
     publisher_publish.allow_tags = True
+
+    def publisher_view(self, obj):
+        url = obj.get_absolute_url()
+        return '<a href="{}?edit" target="_top">View</a>'.format(url)
+    publisher_view.allow_tags = True
+    publisher_view.short_description = 'View'
 
     def get_queryset(self, request):
         # hack! We need request.user to check user publish perms
