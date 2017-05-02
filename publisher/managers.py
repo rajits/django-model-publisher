@@ -21,10 +21,3 @@ class PublisherQuerySet(QuerySet):
         if get_draft_status():
             return self.drafts()
         return self.published()
-
-
-class PublisherManager(models.Manager):
-
-    def contribute_to_class(self, model, name):
-        super(PublisherManager, self).contribute_to_class(model, name)
-        models.signals.pre_delete.connect(publisher_pre_delete, model)

@@ -4,8 +4,8 @@ from django.utils import timezone
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
-from .managers import PublisherQuerySet, PublisherManager
-from .utils import assert_draft
+from .base import PublishingMeta
+from .managers import PublisherQuerySet
 from .signals import (
     publisher_publish_pre_save_draft,
     publisher_pre_publish,
@@ -13,9 +13,13 @@ from .signals import (
     publisher_pre_unpublish,
     publisher_post_unpublish,
 )
+from .utils import assert_draft
 
 
 class PublisherModelBase(models.Model):
+
+    __metaclass__ = PublishingMeta
+
     STATE_PUBLISHED = False
     STATE_DRAFT = True
 
@@ -280,7 +284,7 @@ class PublisherModelBase(models.Model):
 
 class PublisherModel(PublisherModelBase):
     objects = models.Manager()
-    publisher_manager = PublisherManager.from_queryset(PublisherQuerySet)()
+    publisher_manager = PublisherQuerySet.as_manager()
 
     class Meta:
         abstract = True
