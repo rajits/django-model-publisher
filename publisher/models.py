@@ -292,8 +292,8 @@ class PublisherModel(PublisherModelBase):
             ('can_publish', 'Can publish'),
         )
 
-    def save(self, suppress_modified=False, **kwargs):
+    def save(self, suppress_modified=False, *args, **kwargs):
         if suppress_modified is False:
             self.update_modified_at()
 
-        super(PublisherModel, self).save(**kwargs)
+        super(PublisherModel, self).save(*args, **kwargs)
