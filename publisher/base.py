@@ -10,7 +10,8 @@ class PublishingMeta(ModelBase):
     def __new__(cls, name, bases, attrs):
         model = super(PublishingMeta, cls).__new__(cls, name, bases, attrs)
 
+
         if not model._meta.abstract:
-            pre_delete.connect(publisher_pre_delete)
+            pre_delete.connect(model, publisher_pre_delete)
 
         return model
