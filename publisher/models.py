@@ -212,7 +212,7 @@ class PublisherModelBase(models.Model):
     def get_field(self, field_name):
         # return the actual field (not the db representation of the field)
         try:
-            return self._meta.get_field_by_name(field_name)[0]
+            return self._meta.get_field(field_name)
         except models.fields.FieldDoesNotExist:
             return None
 
