@@ -49,9 +49,9 @@ class PublisherForm(forms.ModelForm):
 
                 # Get value from the form or the model
                 if field.editable:
-                    unique_filter[unique_field] = cleaned_data[unique_field]
+                    unique_filter[unique_field] = cleaned_data.get(unique_field, None)
                 else:
-                    unique_filter[unique_field] = getattr(instance, unique_field)
+                    unique_filter[unique_field] = getattr(instance, unique_field, None)
 
             # try to find if any models already exist in the db;
             # I find all models and then exclude those matching the current model.
