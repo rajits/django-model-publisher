@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from django.db.models.query import QuerySet
+from django.db import models
 
+from .signals import publisher_pre_delete
 from .middleware import get_draft_status
 
 
-class PublisherQuerySet(QuerySet):
+class PublisherManager(models.Manager):
 
     def drafts(self):
         from .models import PublisherModelBase

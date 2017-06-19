@@ -5,7 +5,7 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
 from .base import PublishingMeta
-from .managers import PublisherQuerySet
+from .managers import PublisherManager
 from .signals import (
     publisher_publish_pre_save_draft,
     publisher_pre_publish,
@@ -284,7 +284,7 @@ class PublisherModelBase(models.Model):
 
 class PublisherModel(PublisherModelBase):
     objects = models.Manager()
-    publisher_manager = PublisherQuerySet.as_manager()
+    publisher_manager = PublisherManager()
 
     class Meta:
         abstract = True
