@@ -160,7 +160,7 @@ class PublisherAdmin(ModelAdmin):
         url = obj.get_absolute_url()
         return '<a href="{}?edit" target="_top">View</a>'.format(url)
     publisher_view.allow_tags = True
-    publisher_view.short_description = 'View'
+    publisher_view.short_description = 'Preview'
 
     def get_queryset(self, request):
         # hack! We need request.user to check user publish perms
