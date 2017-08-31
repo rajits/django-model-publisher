@@ -155,6 +155,7 @@ class PublisherAdmin(ModelAdmin):
         return t.render(c)
     publisher_publish.short_description = 'Published'
     publisher_publish.allow_tags = True
+    publisher_publish.admin_order_field = 'publisher_is_draft'
 
     def publisher_view(self, obj):
         url = obj.get_absolute_url()
