@@ -159,9 +159,12 @@ class PublisherModelBase(models.Model):
             draft_placeholder = getattr(draft_obj, field)
             published_placeholder = getattr(published_obj, field)
 
-            if draft_placeholder.pk == published_placeholder.pk:
-                published_placeholder.pk = None
-                published_placeholder.save()
+            # only patch if the placeholder already exists
+            # it may have been added after the item was already published
+            if published_placeholder:
+                if draft_placeholder.pk == published_placeholder.pk:
+                    published_placeholder.pk = None
+                    published_placeholder.save()
 
     @assert_draft
     def unpublish(self):
