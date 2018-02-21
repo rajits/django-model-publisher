@@ -6,6 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from .base import PublishingMeta
 from .managers import PublisherManager
+from .utils import assert_draft
 from .signals import (
     publisher_publish_pre_save_draft,
     publisher_pre_publish,

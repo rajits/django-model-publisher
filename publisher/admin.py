@@ -17,12 +17,16 @@ from django.template import loader, Context
 def make_published(modeladmin, request, queryset):
     for row in queryset.all():
         row.publish()
+
+
 make_published.short_description = _('Publish')
 
 
 def make_unpublished(modeladmin, request, queryset):
     for row in queryset.all():
         row.unpublish()
+
+
 make_unpublished.short_description = _('Unpublish')
 
 
@@ -94,7 +98,7 @@ class PublisherAdmin(ModelAdmin):
         self.request = None
         self.url_name_prefix = '%(app_label)s_%(module_name)s_' % {
             'app_label': self.model._meta.app_label,
-            'module_name': self.model._meta.model_name
+            'module_name': self.model._meta.model_name,
         }
 
         # Reverse URL strings used in multiple places..
@@ -133,7 +137,10 @@ class PublisherAdmin(ModelAdmin):
         c = Context({
             'publish_btn': publish_btn,
         })
-        return t.render(c)
+        if django.VERSION >= (1, 10):
+            return t.render(c.flatten())
+        else:
+            return t.render(c)
     publisher_status.short_description = 'Last Changes'
     publisher_status.allow_tags = True
 
@@ -152,7 +159,10 @@ class PublisherAdmin(ModelAdmin):
             'publish_url': reverse(self.publish_reverse, args=(obj.pk, )),
             'unpublish_url': reverse(self.unpublish_reverse, args=(obj.pk, )),
         })
-        return t.render(c)
+        if django.VERSION >= (1, 10):
+            return t.render(c.flatten())
+        else:
+            return t.render(c)
     publisher_publish.short_description = 'Published'
     publisher_publish.allow_tags = True
     publisher_publish.admin_order_field = 'publisher_linked_id'
@@ -182,12 +192,9 @@ class PublisherAdmin(ModelAdmin):
         revert_name = '%srevert' % (self.url_name_prefix, )
 
         publish_urls = [
-            url(r'^(?P<object_id>\d+)/publish/$',
-                self.publish_view, name=publish_name),
-            url(r'^(?P<object_id>\d+)/unpublish/$',
-                self.unpublish_view, name=unpublish_name),
-            url(r'^(?P<object_id>\d+)/revert/$',
-                self.revert_view, name=revert_name),
+            url(r'^(?P<object_id>\d+)/publish/$', self.publish_view, name=publish_name),
+            url(r'^(?P<object_id>\d+)/unpublish/$', self.unpublish_view, name=unpublish_name),
+            url(r'^(?P<object_id>\d+)/revert/$', self.revert_view, name=revert_name),
         ]
 
         return publish_urls + urls
