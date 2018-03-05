@@ -183,7 +183,6 @@ class PublisherModelBase(models.Model):
     @assert_draft
     def revert_to_public(self):
         """
-        @todo Relook at this method. It would be nice if the draft pk did not have to change
         @toavoid Updates self to a alternative instance
         @toavoid self.__class__ = draft_obj.__class__
         @toavoid self.__dict__ = draft_obj.__dict__
@@ -197,6 +196,9 @@ class PublisherModelBase(models.Model):
 
         draft_obj.publisher_linked = None
         draft_obj.save()
+
+        # [AMPI-379] It would be nice if the draft pk did not have to change
+        draft_pk = draft_obj.pk
         draft_obj.delete()
 
         # Mark the published object as a draft
@@ -204,6 +206,7 @@ class PublisherModelBase(models.Model):
         publish_obj = None
 
         draft_obj.publisher_is_draft = draft_obj.STATE_DRAFT
+        draft_obj.pk = draft_pk
         draft_obj.save()
         draft_obj.publish()
 
